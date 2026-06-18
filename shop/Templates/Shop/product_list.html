@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Éclat Floral | Exclusive Dark Florals</title>
+    <style>
+        body {
+            background-color: #050505; /* مشکی مطلق و لوکس */
+            color: #e0e0e0;
+            font-family: 'Playfair Display', serif; /* فونت کلاسیک */
+            margin: 0;
+            padding: 50px;
+            text-align: center;
+        }
+        .header {
+            margin-bottom: 50px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+        .product-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 40px;
+        }
+        .product-card {
+            width: 300px;
+            border: 1px solid #222;
+            padding: 15px;
+            transition: 0.3s;
+        }
+        .product-card:hover {
+            border-color: #555; /* افکت هاور ملایم */
+        }
+        .product-card img {
+            max-width: 100%;
+            height: auto;
+            filter: grayscale(20%); /* کمی تمِ دراماتیک به عکس‌ها می‌دهد */
+        }
+        .price {
+            color: #d4af37; /* رنگ طلایی ملایم برای قیمت */
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Éclat Floral</h1>
+        <p>Elegance in the Shadows</p>
+    </div>
+
+    <div class="product-grid">
+        {% for product in products %}
+            <div class="product-card">
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                {% endif %}
+                <h2>{{ product.name }}</h2>
+                <p class="price">${{ product.price }}</p>
+            </div>
+        {% empty %}
+            <p>هنوز محصولی اضافه نشده است.</p>
+        {% endfor %}
+    </div>
+
+</body>
+</html>
