@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Éclat Floral{% endblock %}</title>
+    <style>
+        body { background-color: #000000; color: #ffffff; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; margin: 0; }
+        
+        /* استایل هدر لوکس */
+        header { padding: 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1a1a1a; }
+        .logo { font-size: 24px; letter-spacing: 6px; text-transform: uppercase; cursor: pointer; }
+        nav a { color: #888; text-decoration: none; margin-left: 20px; font-size: 12px; text-transform: uppercase; letter-spacing: 2px; }
+        nav a:hover { color: #fff; }
+
+        /* محتوای اصلی */
+        main { padding: 50px; min-height: 60vh; }
+
+        /* استایل فوتر */
+        footer { padding: 40px; border-top: 1px solid #1a1a1a; text-align: center; color: #444; font-size: 11px; letter-spacing: 1px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo"><a href="{% url 'shop:product_list' %}" style="color:white; text-decoration:none;">ÉCLAT FLORAL</a></div>
+        <nav>
+            <a href="{% url 'shop:product_list' %}">Shop</a>
+            <a href="#">About Us</a>
+            <a href="{% url 'cart:cart_detail' %}">Cart</a>
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer>
+        &copy; 2026 Éclat Floral - Luxury Premium Flowers
+    </footer>
+
+</body>
+</html>

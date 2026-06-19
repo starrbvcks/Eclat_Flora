@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Your Cart - Éclat Floral</title>
+    <style>
+        body { background-color: #000000; color: #ffffff; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; margin: 0; padding: 5vw; }
+        h1 { font-weight: 300; letter-spacing: 4px; border-bottom: 1px solid #333; padding-bottom: 20px; text-transform: uppercase; }
+        table { width: 100%; border-collapse: collapse; margin-top: 40px; }
+        th, td { padding: 20px 10px; text-align: left; border-bottom: 1px solid #1a1a1a; }
+        th { text-transform: uppercase; letter-spacing: 2px; color: #666; font-size: 11px; }
+        .total-row { font-size: 24px; font-weight: 300; margin-top: 40px; text-align: right; letter-spacing: 1px; }
+        .action-buttons { text-align: right; margin-top: 40px; }
+        .btn { background-color: #ffffff; color: #000000; padding: 15px 30px; text-decoration: none; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; font-size: 12px; margin-left: 10px; transition: 0.3s; }
+        .btn-dark { background-color: #1a1a1a; color: #ffffff; border: 1px solid #333; }
+        .btn-dark:hover { border-color: #fff; }
+        .remove-link { color: #ff4444; text-decoration: none; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; }
+        .update-btn { background: #333; color: #fff; border: none; padding: 6px 12px; cursor: pointer; font-size: 10px; text-transform: uppercase; margin-top: 5px;}
+    </style>
+</head>
+<body>
+    <h1>Shopping Cart</h1>
+    
+    {% if cart|length > 0 %}
+    <table>
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Remove</th>
+                <th>Unit Price</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in cart %}
+                {% with product=item.product %}
+                <tr>
+                    <td>{{ product.name }}</td>
+                    <td>
+                        <form action="{% url 'cart:cart_add' product.id %}" method="post">
+                            {{ item.update_quantity_form.quantity }}
+                            {{ item.update_quantity_form.override }}
+                            {% csrf_token %}
+                            <button type="submit" class="update-btn">Update</button>
+                        </form>
+                    </td>
+                    <td><a href="{% url 'cart:cart_remove' product.id %}" class="remove-link">Remove</a></td>
+                    <td>${{ item.price }}</td>
+                    <td>${{ item.total_price }}</td>
+                </tr>
+                {% endwith %}
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <div class="total-row">
+        Total: <strong>${{ cart.get_total_price }}</strong>
+    </div>
+    
+    <div class="action-buttons">
+        <a href="/" class="btn btn-dark">Continue Shopping</a>
+        <a href="#" class="btn">Checkout</a>
+    </div>
+    
+    {% else %}
+    <p style="margin-top: 40px; color: #888; font-weight: 300; letter-spacing: 1px;">Your cart is beautifully empty.</p>
+    <a href="/" class="btn btn-dark" style="margin-top: 20px; display: inline-block;">Return to Shop</a>
+    {% endif %}
+</body>
+</html>

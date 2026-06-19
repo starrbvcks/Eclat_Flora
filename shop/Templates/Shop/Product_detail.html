@@ -1,71 +1,44 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ product.name }} | Éclat Floral</title>
-    <style>
-        body {
-            background-color: #050505;
-            color: #e0e0e0;
-            font-family: 'Playfair Display', serif;
-            margin: 0;
-            padding: 50px;
-            display: flex;
-            justify-content: center;
-        }
-        .detail-container {
-            display: flex;
-            gap: 50px;
-            max-width: 900px;
-            align-items: center;
-        }
-        .product-image img {
-            max-width: 400px;
-            border: 1px solid #333;
-            filter: grayscale(10%);
-        }
-        .product-info {
-            text-align: left;
-        }
-        .product-info h1 {
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-        .price {
-            color: #d4af37;
-            font-size: 1.5em;
-            margin: 20px 0;
-        }
-        .description {
-            line-height: 1.6;
-            color: #aaa;
-        }
-        .back-btn {
-            display: inline-block;
-            margin-top: 30px;
-            color: #fff;
-            text-decoration: none;
-            border-bottom: 1px solid #d4af37;
-            padding-bottom: 5px;
-        }
-    </style>
-</head>
-<body>
+{% extends "shop/base.html" %}
 
-    <div class="detail-container">
-        <div class="product-image">
-            {% if product.image %}
-                <img src="{{ product.image.url }}" alt="{{ product.name }}">
-            {% endif %}
-        </div>
-        <div class="product-info">
-            <h1>{{ product.name }}</h1>
-            <p class="price">${{ product.price }}</p>
-            <p class="description">{{ product.description }}</p>
-            <p>موجودی انبار: {{ product.stock }} عدد</p>
-            <a href="{% url 'shop:product_list' %}" class="back-btn">← بازگشت به ویترین</a>
-        </div>
+{% block title %}{{ product.name }} - Éclat Floral{% endblock %}
+
+{% block content %}
+<style>
+    /* استایل‌ها را دست نزن، عالی هستند */
+    .product-container { display: flex; gap: 50px; max-width: 1000px; width: 100%; margin: 0 auto; }
+    .product-image { flex: 1; }
+    .product-image img { max-width: 100%; height: auto; border: 1px solid #1a1a1a; border-radius: 4px; }
+    .product-info { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+    h1 { font-weight: 300; letter-spacing: 4px; text-transform: uppercase; margin-top: 0; border-bottom: 1px solid #333; padding-bottom: 20px; font-size: 28px; }
+    .category { color: #666; text-transform: uppercase; font-size: 11px; letter-spacing: 2px; margin-bottom: 10px; }
+    .price { font-size: 22px; font-weight: 300; margin: 20px 0; color: #fff; letter-spacing: 1px; }
+    .description { line-height: 1.8; color: #888; font-weight: 300; margin-bottom: 40px; text-align: justify; }
+    .cart-form { display: flex; align-items: center; gap: 15px; margin-top: 10px; padding-top: 20px; border-top: 1px solid #1a1a1a; }
+    .cart-form select { background-color: #111; color: #fff; border: 1px solid #333; padding: 12px; outline: none; cursor: pointer; }
+    .btn-add { background-color: #ffffff; color: #000000; padding: 15px 30px; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; font-size: 12px; transition: 0.3s; flex-grow: 1; text-align: center; }
+    .btn-add:hover { background-color: #e6e6e6; }
+</style>
+
+<div class="product-container">
+    <div class="product-image">
+        {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+        {% endif %}
     </div>
-
-</body>
-</html>
+    
+    <div class="product-info">
+        <div class="category">{{ product.category.name }}</div>
+        <h1>{{ product.name }}</h1>
+        <div class="price">${{ product.price }}</div>
+        <div class="description">
+            {{ product.description|linebreaks }}
+        </div>
+        
+        <form action="{% url 'cart:cart_add' product.id %}" method="post" class="cart-form">
+            {{ cart_product_form }}
+            {% csrf_token %}
+            <button type="submit" class="btn-add">Add to Cart</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

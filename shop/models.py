@@ -1,9 +1,19 @@
 from django.db import models
 
 class Category(models.Model):
-    """دسته‌بندی گل‌ها (مثلاً: دسته گل عروس، گیاهان آپارتمانی و...)"""
-    name = models.CharField(max_length=100, verbose_name="نام دسته‌بندی")
+    name = models.CharField(max_length=200)
     slug = models.SlugField(unique=True)
+    # این فیلد کلیدِ ماجراست
+    parent = models.ForeignKey(
+        'self', 
+        on_delete=models.CASCADE, 
+        null=True, 
+        blank=True, 
+        related_name='subcategories'
+    )
+
+    class Meta:
+        verbose_name_plural = "categories"
 
     def __str__(self):
         return self.name
