@@ -56,7 +56,9 @@
                 {% if product.image %}
                     <img src="{{ product.image.url }}" alt="{{ product.name }}">
                 {% endif %}
+                <a href="{% url 'shop:product_detail' product.slug %}" style="color: inherit; text-decoration: none;">
                 <h2>{{ product.name }}</h2>
+                </a>
                 <p class="price">${{ product.price }}</p>
             </div>
         {% empty %}
