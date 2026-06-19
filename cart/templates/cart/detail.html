@@ -1,71 +1,242 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Your Cart - Éclat Floral</title>
-    <style>
-        body { background-color: #000000; color: #ffffff; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; margin: 0; padding: 5vw; }
-        h1 { font-weight: 300; letter-spacing: 4px; border-bottom: 1px solid #333; padding-bottom: 20px; text-transform: uppercase; }
-        table { width: 100%; border-collapse: collapse; margin-top: 40px; }
-        th, td { padding: 20px 10px; text-align: left; border-bottom: 1px solid #1a1a1a; }
-        th { text-transform: uppercase; letter-spacing: 2px; color: #666; font-size: 11px; }
-        .total-row { font-size: 24px; font-weight: 300; margin-top: 40px; text-align: right; letter-spacing: 1px; }
-        .action-buttons { text-align: right; margin-top: 40px; }
-        .btn { background-color: #ffffff; color: #000000; padding: 15px 30px; text-decoration: none; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; font-size: 12px; margin-left: 10px; transition: 0.3s; }
-        .btn-dark { background-color: #1a1a1a; color: #ffffff; border: 1px solid #333; }
-        .btn-dark:hover { border-color: #fff; }
-        .remove-link { color: #ff4444; text-decoration: none; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; }
-        .update-btn { background: #333; color: #fff; border: none; padding: 6px 12px; cursor: pointer; font-size: 10px; text-transform: uppercase; margin-top: 5px;}
-    </style>
-</head>
-<body>
-    <h1>Shopping Cart</h1>
-    
+{% extends "shop/base.html" %}
+
+{% block title %}سبد خرید | Éclat Floral{% endblock %}
+
+{% block content %}
+<style>
+    .cart-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 320px;
+        gap: 34px;
+        align-items: start;
+    }
+
+    .cart-items {
+        display: grid;
+        gap: 14px;
+    }
+
+    .cart-item {
+        display: grid;
+        grid-template-columns: 96px minmax(0, 1fr) auto;
+        gap: 18px;
+        align-items: center;
+        padding: 16px;
+        border: 1px solid var(--border-soft);
+        background: linear-gradient(180deg, var(--surface) 0%, #0a0a0a 100%);
+    }
+
+    .cart-item img,
+    .cart-image-placeholder {
+        width: 96px;
+        height: 112px;
+        object-fit: cover;
+        background: var(--surface-soft);
+    }
+
+    .cart-item h2 {
+        margin: 0 0 8px;
+        font-size: 18px;
+        font-weight: 400;
+        line-height: 1.5;
+    }
+
+    .item-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 18px;
+        color: var(--muted);
+        font-size: 13px;
+    }
+
+    .quantity-form {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 14px;
+    }
+
+    .quantity-form select {
+        min-width: 72px;
+        padding: 9px;
+        border: 1px solid var(--border);
+        background: var(--bg-deep);
+        color: var(--text);
+    }
+
+    .small-btn {
+        min-height: 38px;
+        padding: 0 12px;
+        border: 1px solid var(--border);
+        background: var(--surface-soft);
+        color: var(--text);
+        cursor: pointer;
+    }
+
+    .item-total {
+        min-width: 130px;
+        text-align: left;
+    }
+
+    .item-total strong {
+        display: block;
+        margin-bottom: 12px;
+        color: var(--gold);
+        font-size: 17px;
+    }
+
+    .remove-link {
+        color: var(--danger);
+        font-size: 13px;
+    }
+
+    .cart-summary {
+        position: sticky;
+        top: 100px;
+        padding: 22px;
+        border: 1px solid var(--border);
+        background: linear-gradient(180deg, var(--surface) 0%, #0a0a0a 100%);
+    }
+
+    .cart-summary h2 {
+        margin: 0 0 18px;
+        font-size: 21px;
+        font-weight: 400;
+    }
+
+    .summary-line {
+        display: flex;
+        justify-content: space-between;
+        gap: 18px;
+        padding: 14px 0;
+        border-top: 1px solid var(--border-soft);
+        color: var(--muted);
+    }
+
+    .summary-total {
+        color: var(--gold);
+        font-size: 18px;
+    }
+
+    .summary-actions {
+        display: grid;
+        gap: 10px;
+        margin-top: 18px;
+    }
+
+    .empty-cart {
+        max-width: 620px;
+        padding: 42px;
+        border: 1px solid var(--border);
+        background: linear-gradient(180deg, var(--surface) 0%, #0a0a0a 100%);
+    }
+
+    .empty-cart h1 {
+        margin: 0 0 12px;
+        font-size: 28px;
+        font-weight: 400;
+    }
+
+    .empty-cart p {
+        margin: 0 0 24px;
+        color: var(--muted);
+        line-height: 1.9;
+    }
+
+    @media (max-width: 900px) {
+        .cart-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .cart-summary {
+            position: static;
+        }
+    }
+
+    @media (max-width: 620px) {
+        .cart-item {
+            grid-template-columns: 82px minmax(0, 1fr);
+        }
+
+        .cart-item img,
+        .cart-image-placeholder {
+            width: 82px;
+            height: 96px;
+        }
+
+        .item-total {
+            grid-column: 1 / -1;
+            text-align: right;
+        }
+    }
+</style>
+
+<div class="page-shell">
     {% if cart|length > 0 %}
-    <table>
-        <thead>
-            <tr>
-                <th>Product</th>
-                <th>Quantity</th>
-                <th>Remove</th>
-                <th>Unit Price</th>
-                <th>Total</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in cart %}
-                {% with product=item.product %}
-                <tr>
-                    <td>{{ product.name }}</td>
-                    <td>
-                        <form action="{% url 'cart:cart_add' product.id %}" method="post">
-                            {{ item.update_quantity_form.quantity }}
-                            {{ item.update_quantity_form.override }}
-                            {% csrf_token %}
-                            <button type="submit" class="update-btn">Update</button>
-                        </form>
-                    </td>
-                    <td><a href="{% url 'cart:cart_remove' product.id %}" class="remove-link">Remove</a></td>
-                    <td>${{ item.price }}</td>
-                    <td>${{ item.total_price }}</td>
-                </tr>
-                {% endwith %}
-            {% endfor %}
-        </tbody>
-    </table>
-    
-    <div class="total-row">
-        Total: <strong>${{ cart.get_total_price }}</strong>
-    </div>
-    
-    <div class="action-buttons">
-        <a href="/" class="btn btn-dark">Continue Shopping</a>
-        <a href="#" class="btn">Checkout</a>
-    </div>
-    
+        <div class="page-head">
+            <h1>سبد خرید</h1>
+            <span class="muted">{{ cart|length }} آیتم</span>
+        </div>
+
+        <section class="cart-layout">
+            <div class="cart-items">
+                {% for item in cart %}
+                    {% with product=item.product %}
+                        <article class="cart-item">
+                            <a href="{% url 'shop:product_detail' product.slug %}">
+                                {% if product.image %}
+                                    <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                                {% else %}
+                                    <span class="cart-image-placeholder"></span>
+                                {% endif %}
+                            </a>
+
+                            <div>
+                                <h2><a href="{% url 'shop:product_detail' product.slug %}">{{ product.name }}</a></h2>
+                                <div class="item-meta">
+                                    <span>{{ product.category.name }}</span>
+                                    <span>{{ item.price|floatformat:"0" }} تومان</span>
+                                </div>
+
+                                <form action="{% url 'cart:cart_add' product.id %}" method="post" class="quantity-form">
+                                    {{ item.update_quantity_form.quantity }}
+                                    {{ item.update_quantity_form.override }}
+                                    {% csrf_token %}
+                                    <button type="submit" class="small-btn">به‌روزرسانی</button>
+                                </form>
+                            </div>
+
+                            <div class="item-total">
+                                <strong>{{ item.total_price|floatformat:"0" }} تومان</strong>
+                                <a href="{% url 'cart:cart_remove' product.id %}" class="remove-link">حذف</a>
+                            </div>
+                        </article>
+                    {% endwith %}
+                {% endfor %}
+            </div>
+
+            <aside class="cart-summary">
+                <h2>خلاصه سفارش</h2>
+                <div class="summary-line">
+                    <span>تعداد</span>
+                    <span>{{ cart|length }}</span>
+                </div>
+                <div class="summary-line summary-total">
+                    <span>جمع کل</span>
+                    <strong>{{ cart.get_total_price|floatformat:"0" }} تومان</strong>
+                </div>
+                <div class="summary-actions">
+                    <a href="{% url 'cart:checkout' %}" class="btn">ادامه و پرداخت</a>
+                    <a href="{% url 'shop:product_list' %}" class="btn secondary">ادامه خرید</a>
+                </div>
+            </aside>
+        </section>
     {% else %}
-    <p style="margin-top: 40px; color: #888; font-weight: 300; letter-spacing: 1px;">Your cart is beautifully empty.</p>
-    <a href="/" class="btn btn-dark" style="margin-top: 20px; display: inline-block;">Return to Shop</a>
+        <section class="empty-cart">
+            <h1>سبد خرید خالی است</h1>
+            <p>محصولی انتخاب نشده. از فروشگاه شروع کنید و چیدمان دلخواهتان را بسازید.</p>
+            <a href="{% url 'shop:product_list' %}" class="btn">رفتن به فروشگاه</a>
+        </section>
     {% endif %}
-</body>
-</html>
+</div>
+{% endblock %}

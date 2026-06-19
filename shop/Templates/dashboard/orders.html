@@ -1,0 +1,53 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}سفارش‌ها | Éclat Floral{% endblock %}
+
+{% block content %}
+<p class="page-kicker">مدیریت سفارش‌ها</p>
+<h1 class="page-title">آخرین سفارش‌ها</h1>
+
+<section class="stat-grid" aria-label="آمار سفارش‌ها">
+    <article class="stat-card">
+        <strong>0</strong>
+        <span>کل سفارش‌ها</span>
+    </article>
+    <article class="stat-card">
+        <strong>0</strong>
+        <span>سفارش جدید</span>
+    </article>
+    <article class="stat-card">
+        <strong>0</strong>
+        <span>در حال آماده‌سازی</span>
+    </article>
+    <article class="stat-card">
+        <strong>0</strong>
+        <span>تکمیل‌شده</span>
+    </article>
+</section>
+
+<section class="panel-card">
+    <div class="panel-head">
+        <h2>جدول سفارش‌ها</h2>
+        <a class="secondary" href="{% url 'cart:cart_detail' %}">مشاهده سبد خرید</a>
+    </div>
+
+    <div class="table-wrap">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>کد</th>
+                    <th>مشتری</th>
+                    <th>مبلغ</th>
+                    <th>وضعیت</th>
+                    <th>تاریخ</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="5" class="empty-panel">بعد از ساخت مدل سفارش، اطلاعات این بخش اینجا نمایش داده می‌شود.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

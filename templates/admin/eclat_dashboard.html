@@ -1,0 +1,92 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+<div class="ef-dashboard">
+    <section class="ef-hero">
+        <div>
+            <p class="ef-kicker">Éclat Floral</p>
+            <h1>داشبورد فروشگاه</h1>
+            <p>وضعیت محصولات، موجودی و دسترسی‌های سریع برای مدیریت روزمره.</p>
+        </div>
+        <div class="ef-actions">
+            <a class="ef-button" href="{% url 'admin:shop_product_add' %}">افزودن محصول</a>
+            <a class="ef-button secondary" href="{% url 'admin:shop_category_add' %}">افزودن دسته‌بندی</a>
+        </div>
+    </section>
+
+    <section class="ef-stat-grid" aria-label="آمار فروشگاه">
+        <article class="ef-stat-card">
+            <span>محصولات</span>
+            <strong>{{ stats.products }}</strong>
+        </article>
+        <article class="ef-stat-card">
+            <span>فعال در سایت</span>
+            <strong>{{ stats.available }}</strong>
+        </article>
+        <article class="ef-stat-card">
+            <span>غیرفعال</span>
+            <strong>{{ stats.hidden }}</strong>
+        </article>
+        <article class="ef-stat-card warning">
+            <span>کم‌موجودی</span>
+            <strong>{{ stats.low_stock }}</strong>
+        </article>
+        <article class="ef-stat-card danger">
+            <span>ناموجود</span>
+            <strong>{{ stats.out_stock }}</strong>
+        </article>
+        <article class="ef-stat-card">
+            <span>دسته‌بندی‌ها</span>
+            <strong>{{ stats.categories }}</strong>
+        </article>
+        <article class="ef-stat-card">
+            <span>کاربران</span>
+            <strong>{{ stats.users }}</strong>
+        </article>
+    </section>
+
+    <section class="ef-admin-grid">
+        <article class="ef-panel">
+            <div class="ef-panel-head">
+                <h2>محصولات اخیر</h2>
+                <a href="{% url 'admin:shop_product_changelist' %}">همه محصولات</a>
+            </div>
+
+            <div class="ef-product-list">
+                {% for product in recent_products %}
+                    <a class="ef-product-row" href="{% url 'admin:shop_product_change' product.id %}">
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                        {% else %}
+                            <span class="ef-product-placeholder"></span>
+                        {% endif %}
+                        <span>
+                            <strong>{{ product.name }}</strong>
+                            <small>{{ product.category.name }} · {{ product.price|floatformat:"0" }} تومان</small>
+                        </span>
+                        {% if product.available %}
+                            <em class="ef-badge ef-badge-success">فعال</em>
+                        {% else %}
+                            <em class="ef-badge ef-badge-warning">غیرفعال</em>
+                        {% endif %}
+                    </a>
+                {% empty %}
+                    <p class="ef-empty">هنوز محصولی ثبت نشده است.</p>
+                {% endfor %}
+            </div>
+        </article>
+
+        <article class="ef-panel">
+            <div class="ef-panel-head">
+                <h2>دسترسی سریع</h2>
+            </div>
+            <div class="ef-shortcuts">
+                <a href="{% url 'admin:shop_product_changelist' %}">مدیریت محصولات</a>
+                <a href="{% url 'admin:shop_category_changelist' %}">مدیریت دسته‌بندی‌ها</a>
+                <a href="{% url 'admin:auth_user_changelist' %}">کاربران</a>
+                <a href="{% url 'shop:product_list' %}">باز کردن فروشگاه</a>
+            </div>
+        </article>
+    </section>
+</div>
+{% endblock %}

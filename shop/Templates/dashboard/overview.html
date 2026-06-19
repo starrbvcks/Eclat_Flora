@@ -1,0 +1,87 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}نمای کلی فروشگاه | Éclat Floral{% endblock %}
+
+{% block content %}
+<p class="page-kicker">پنل مدیریت</p>
+<h1 class="page-title">نمای کلی فروشگاه</h1>
+
+<section class="stat-grid" aria-label="آمار فروشگاه">
+    <article class="stat-card">
+        <strong>{{ stats.products }}</strong>
+        <span>محصولات</span>
+    </article>
+    <article class="stat-card">
+        <strong>{{ stats.available }}</strong>
+        <span>فعال در سایت</span>
+    </article>
+    <article class="stat-card">
+        <strong>{{ stats.orders }}</strong>
+        <span>کل سفارش‌ها</span>
+    </article>
+    <article class="stat-card">
+        <strong>{{ stats.low_stock }}</strong>
+        <span>موجودی کم</span>
+    </article>
+</section>
+
+<section class="panel-card">
+    <div class="panel-head">
+        <h2>آخرین محصولات</h2>
+        <a href="{% url 'shop:dashboard_products' %}">مشاهده همه</a>
+    </div>
+
+    <div class="table-wrap">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>محصول</th>
+                    <th>دسته‌بندی</th>
+                    <th>قیمت</th>
+                    <th>موجودی</th>
+                    <th>وضعیت</th>
+                    <th>ویرایش</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in recent_products %}
+                    <tr>
+                        <td>
+                            <div class="product-cell">
+                                {% if product.image %}
+                                    <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                                {% else %}
+                                    <span class="product-placeholder"></span>
+                                {% endif %}
+                                <span>
+                                    <strong>{{ product.name }}</strong>
+                                    <span>{{ product.updated|date:"Y/m/d" }}</span>
+                                </span>
+                            </div>
+                        </td>
+                        <td>{{ product.category.name }}</td>
+                        <td>{{ product.price|floatformat:"0" }} تومان</td>
+                        <td>{{ product.stock }}</td>
+                        <td>
+                            {% if product.stock == 0 %}
+                                <span class="status-badge status-danger">ناموجود</span>
+                            {% elif product.stock < 5 %}
+                                <span class="status-badge status-warning">کم‌موجودی</span>
+                            {% elif product.available %}
+                                <span class="status-badge status-success">فعال</span>
+                            {% else %}
+                                <span class="status-badge status-warning">غیرفعال</span>
+                            {% endif %}
+                        </td>
+                        <td><a class="admin-button secondary" href="{% url 'admin:shop_product_change' product.id %}">ویرایش</a></td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="6" class="empty-panel">هنوز محصولی ثبت نشده است.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

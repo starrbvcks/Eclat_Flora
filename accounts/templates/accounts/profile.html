@@ -1,0 +1,155 @@
+{% extends "shop/base.html" %}
+
+{% block title %}حساب من | Éclat Floral{% endblock %}
+
+{% block content %}
+<style>
+    .profile-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(280px, 380px);
+        gap: 28px;
+        align-items: start;
+    }
+
+    .profile-main,
+    .profile-side {
+        min-width: 0;
+        border: 1px solid var(--border-soft);
+        background: linear-gradient(180deg, var(--surface) 0%, #0a0a0a 100%);
+    }
+
+    .profile-main {
+        padding: 34px;
+    }
+
+    .profile-main h1 {
+        margin: 0 0 12px;
+        font-size: 32px;
+        font-weight: 800;
+        line-height: 1.5;
+        overflow-wrap: anywhere;
+    }
+
+    .profile-main p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.9;
+    }
+
+    .profile-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 28px;
+    }
+
+    .profile-actions .btn,
+    .logout-form {
+        flex: 0 1 auto;
+    }
+
+    .logout-form {
+        margin: 0;
+    }
+
+    .profile-side {
+        padding: 24px;
+    }
+
+    .profile-side h2 {
+        margin: 0 0 18px;
+        font-size: 20px;
+        font-weight: 800;
+    }
+
+    .info-list {
+        display: grid;
+        gap: 14px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .info-list li {
+        display: grid;
+        gap: 6px;
+        padding-bottom: 14px;
+        border-bottom: 1px solid var(--border-soft);
+        color: var(--muted);
+    }
+
+    .info-list span {
+        color: var(--muted-soft);
+        font-size: 13px;
+    }
+
+    .info-list strong {
+        min-width: 0;
+        color: var(--text);
+        overflow-wrap: anywhere;
+        word-break: break-word;
+        line-height: 1.7;
+    }
+
+    @media (max-width: 900px) {
+        .profile-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 520px) {
+        .profile-main,
+        .profile-side {
+            padding: 24px;
+        }
+
+        .profile-actions .btn,
+        .logout-form,
+        .logout-form .btn {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="page-shell">
+    <div class="page-head">
+        <h1>حساب من</h1>
+        <span class="muted">Éclat Floral</span>
+    </div>
+
+    <section class="profile-layout">
+        <div class="profile-main">
+            <h1>سلام {{ request.user.first_name|default:request.user.email|default:request.user.username }}</h1>
+            <p>از اینجا می‌توانید خریدتان را ادامه دهید، سبد خرید را ببینید یا رمز عبورتان را تغییر دهید.</p>
+
+            <div class="profile-actions">
+                <a class="btn" href="{% url 'cart:cart_detail' %}">مشاهده سبد خرید</a>
+                <a class="btn secondary" href="{% url 'shop:product_list' %}">ادامه خرید</a>
+                <a class="btn secondary" href="{% url 'accounts:password_change' %}">تغییر رمز</a>
+                <form class="logout-form" action="{% url 'accounts:logout' %}" method="post">
+                    {% csrf_token %}
+                    <button class="btn secondary" type="submit">خروج</button>
+                </form>
+            </div>
+        </div>
+
+        <aside class="profile-side">
+            <h2>اطلاعات حساب</h2>
+            <ul class="info-list">
+                <li>
+                    <span>نام</span>
+                    <strong>{{ request.user.first_name|default:"ثبت نشده" }}</strong>
+                </li>
+                <li>
+                    <span>ایمیل</span>
+                    <strong>{% if request.user.email %}{{ request.user.email }}{% else %}ثبت نشده{% endif %}</strong>
+                </li>
+                <li>
+                    <span>سبد خرید</span>
+                    <strong>{{ cart|length }} آیتم</strong>
+                </li>
+            </ul>
+        </aside>
+    </section>
+</div>
+{% endblock %}

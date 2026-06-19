@@ -1,70 +1,210 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Éclat Floral | Exclusive Dark Florals</title>
-    <style>
-        body {
-            background-color: #050505; /* مشکی مطلق و لوکس */
-            color: #e0e0e0;
-            font-family: 'Playfair Display', serif; /* فونت کلاسیک */
-            margin: 0;
-            padding: 50px;
-            text-align: center;
-        }
-        .header {
-            margin-bottom: 50px;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-        }
-        .product-grid {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 40px;
-        }
-        .product-card {
-            width: 300px;
-            border: 1px solid #222;
-            padding: 15px;
-            transition: 0.3s;
-        }
-        .product-card:hover {
-            border-color: #555; /* افکت هاور ملایم */
-        }
-        .product-card img {
-            max-width: 100%;
-            height: auto;
-            filter: grayscale(20%); /* کمی تمِ دراماتیک به عکس‌ها می‌دهد */
-        }
-        .price {
-            color: #d4af37; /* رنگ طلایی ملایم برای قیمت */
-            font-size: 1.2em;
-        }
-    </style>
-</head>
-<body>
+{% extends "shop/base.html" %}
 
-    <div class="header">
-        <h1>Éclat Floral</h1>
-        <p>Elegance in the Shadows</p>
-    </div>
+{% block title %}{% if category %}{{ category.name }}{% else %}فروشگاه{% endif %} | Éclat Floral{% endblock %}
 
-    <div class="product-grid">
-        {% for product in products %}
-            <div class="product-card">
-                {% if product.image %}
-                    <img src="{{ product.image.url }}" alt="{{ product.name }}">
-                {% endif %}
-                <a href="{% url 'shop:product_detail' product.slug %}" style="color: inherit; text-decoration: none;">
-                <h2>{{ product.name }}</h2>
-                </a>
-                <p class="price">${{ product.price }}</p>
+{% block content %}
+<style>
+    .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(280px, 420px);
+        gap: 42px;
+        align-items: center;
+        margin-bottom: 54px;
+    }
+
+    .hero h1 {
+        max-width: 640px;
+        margin: 0 0 18px;
+        font-family: var(--font-brand);
+        font-size: clamp(46px, 7vw, 76px);
+        font-weight: 500;
+        letter-spacing: 0.01em;
+        line-height: 1.08;
+        transition: color 0.28s ease, letter-spacing 0.28s ease, transform 0.28s ease;
+    }
+
+    .hero h1:hover {
+        color: var(--accent-soft);
+        letter-spacing: 0.025em;
+        transform: translateX(-6px);
+    }
+
+    .hero p {
+        position: relative;
+        max-width: 520px;
+        margin: 0;
+        padding-right: 54px;
+        color: var(--muted);
+        font-size: 15px;
+        font-weight: 500;
+        letter-spacing: 0.08em;
+        line-height: 1.9;
+        text-transform: uppercase;
+    }
+
+    .hero p::before {
+        content: "";
+        position: absolute;
+        top: 0.95em;
+        right: 0;
+        width: 36px;
+        height: 1px;
+        background: var(--gold);
+    }
+
+    .hero-image {
+        min-height: 360px;
+        border: 1px solid var(--border);
+        background:
+            linear-gradient(180deg, rgba(11, 11, 12, 0.04), rgba(5, 5, 5, 0.7)),
+            url("/media/products/2026/06/19/photo_2_2026-06-18_17-40-41.jpg");
+        background-position: center;
+        background-size: cover;
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.32);
+    }
+
+    .category-strip {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 44px;
+    }
+
+    .category-chip {
+        display: inline-flex;
+        align-items: center;
+        min-height: 40px;
+        padding: 0 16px;
+        border: 1px solid var(--border);
+        color: var(--muted);
+        font-size: 13px;
+    }
+
+    .category-chip:hover,
+    .category-chip.active {
+        border-color: var(--accent);
+        color: var(--text);
+        background: rgba(139, 30, 30, 0.24);
+    }
+
+    .product-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+        gap: 24px;
+    }
+
+    .product-card {
+        border: 1px solid var(--border-soft);
+        background: linear-gradient(180deg, var(--surface) 0%, #0a0a0a 100%);
+        overflow: hidden;
+        transition: border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .product-card:hover {
+        border-color: var(--accent);
+        transform: translateY(-3px);
+        box-shadow: 0 22px 55px rgba(0, 0, 0, 0.48);
+    }
+
+    .product-card img,
+    .product-image-placeholder {
+        display: block;
+        width: 100%;
+        aspect-ratio: 4 / 5;
+        object-fit: cover;
+        background: var(--surface-soft);
+        transition: transform 0.45s ease, filter 0.45s ease;
+    }
+
+    .product-card:hover img {
+        transform: scale(1.07);
+        filter: contrast(1.06) saturate(1.08);
+    }
+
+    .product-body {
+        padding: 16px;
+    }
+
+    .product-body h3 {
+        margin: 0 0 10px;
+        font-size: 18px;
+        font-weight: 700;
+        line-height: 1.6;
+        transition: color 0.2s ease;
+    }
+
+    .product-card:hover .product-body h3 {
+        color: var(--accent-soft);
+    }
+
+    .price {
+        margin: 0;
+        color: var(--gold);
+        font-size: 15px;
+    }
+
+    .empty-state {
+        grid-column: 1 / -1;
+        padding: 42px;
+        border: 1px solid var(--border);
+        color: var(--muted);
+        text-align: center;
+    }
+
+    @media (max-width: 860px) {
+        .hero {
+            grid-template-columns: 1fr;
+        }
+
+        .hero h1 {
+            font-size: 34px;
+        }
+    }
+</style>
+
+<div class="page-shell">
+    {% if not category %}
+        <section class="hero">
+            <div>
+                <h1>Where Flowers Become Art</h1>
+                <p>Curated floral compositions for quietly unforgettable moments</p>
             </div>
-        {% empty %}
-            <p>هنوز محصولی اضافه نشده است.</p>
-        {% endfor %}
-    </div>
+            <div class="hero-image" role="img" aria-label="دسته‌گل Éclat Floral"></div>
+        </section>
+    {% endif %}
 
-</body>
-</html>
+    <nav class="category-strip" aria-label="دسته‌بندی محصولات">
+        <a class="category-chip {% if not category %}active{% endif %}" href="{% url 'shop:product_list' %}">همه محصولات</a>
+        {% for item in categories %}
+            <a class="category-chip {% if category.id == item.id %}active{% endif %}" href="{{ item.get_absolute_url }}">{{ item.name }}</a>
+        {% endfor %}
+    </nav>
+
+    <section id="products">
+        <div class="page-head">
+            <h2>{% if category %}{{ category.name }}{% else %}محصولات{% endif %}</h2>
+            <span class="muted">{{ products|length }} محصول</span>
+        </div>
+
+        <div class="product-grid">
+            {% for product in products %}
+                <article class="product-card">
+                    <a href="{% url 'shop:product_detail' product.slug %}">
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                        {% else %}
+                            <span class="product-image-placeholder"></span>
+                        {% endif %}
+                        <div class="product-body">
+                            <h3>{{ product.name }}</h3>
+                            <p class="price">{{ product.price|floatformat:"0" }} تومان</p>
+                        </div>
+                    </a>
+                </article>
+            {% empty %}
+                <p class="empty-state">فعلا محصولی در این بخش نیست.</p>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+{% endblock %}

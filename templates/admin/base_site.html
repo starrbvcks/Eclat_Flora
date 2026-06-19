@@ -1,0 +1,21 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{% if title %}{{ title }} | {% endif %}Éclat Floral Admin{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'admin/css/eclat_admin.css' %}">
+{% endblock %}
+
+{% block branding %}
+<div class="ef-admin-brand">
+    <a href="{% url 'admin:index' %}" class="ef-admin-logo">Éclat Floral</a>
+    <span>پنل مدیریت فروشگاه</span>
+</div>
+{% endblock %}
+
+{% block nav-global %}
+<a class="ef-admin-nav-link" href="{% url 'admin:eclat_dashboard' %}">داشبورد فروشگاه</a>
+<a class="ef-admin-nav-link" href="{% url 'shop:product_list' %}">مشاهده سایت</a>
+{% endblock %}

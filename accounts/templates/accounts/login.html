@@ -1,0 +1,92 @@
+{% extends "shop/base.html" %}
+
+{% block title %}ورود | Éclat Floral{% endblock %}
+
+{% block content %}
+<style>
+    .auth-box {
+        width: min(440px, 100%);
+        margin: 0 auto;
+        padding: 32px;
+        border: 1px solid var(--border-soft);
+        background: linear-gradient(180deg, var(--surface) 0%, #0a0a0a 100%);
+    }
+
+    .auth-box h1 {
+        margin: 0 0 24px;
+        font-size: 28px;
+        font-weight: 800;
+    }
+
+    .form-row {
+        margin-bottom: 16px;
+    }
+
+    .form-row label {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--muted);
+        font-size: 14px;
+    }
+
+    .form-row input {
+        width: 100%;
+        padding: 13px 14px;
+        border: 1px solid var(--border);
+        background: var(--bg-deep);
+        color: var(--text);
+    }
+
+    .form-errors {
+        margin-bottom: 18px;
+        color: var(--danger);
+        font-size: 14px;
+        line-height: 1.8;
+    }
+
+    .auth-note {
+        margin: 18px 0 0;
+        color: var(--muted-soft);
+        font-size: 14px;
+    }
+
+    .auth-note a {
+        color: var(--text);
+        border-bottom: 1px solid var(--border);
+    }
+</style>
+
+<section class="auth-box">
+    <h1>ورود</h1>
+
+    {% if form.errors %}
+        <div class="form-errors">ایمیل یا رمز عبور درست نیست.</div>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ next }}">
+
+        <div class="form-row">
+            {{ form.username.label_tag }}
+            {{ form.username }}
+        </div>
+
+        <div class="form-row">
+            {{ form.password.label_tag }}
+            {{ form.password }}
+        </div>
+
+        <button class="btn" type="submit">ورود</button>
+    </form>
+
+    <p class="auth-note">
+        حساب ندارید؟
+        <a href="{% url 'accounts:register' %}">ثبت‌نام</a>
+    </p>
+    <p class="auth-note">
+        رمزتان را فراموش کرده‌اید؟
+        <a href="{% url 'accounts:password_reset' %}">بازیابی رمز عبور</a>
+    </p>
+</section>
+{% endblock %}

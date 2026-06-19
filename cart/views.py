@@ -1,4 +1,5 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 from shop.models import Product
 from .cart import Cart
@@ -45,3 +46,13 @@ def cart_detail(request):
             'override': True})
             
     return render(request, 'cart/detail.html', {'cart': cart})
+
+
+@login_required
+def checkout(request):
+    cart = Cart(request)
+
+    if len(cart) == 0:
+        return redirect('cart:cart_detail')
+
+    return render(request, 'cart/checkout.html', {'cart': cart})

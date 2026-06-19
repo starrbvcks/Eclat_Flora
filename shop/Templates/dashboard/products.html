@@ -1,0 +1,79 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}محصولات | Éclat Floral{% endblock %}
+
+{% block content %}
+<p class="page-kicker">مدیریت محصولات</p>
+<h1 class="page-title">محصولات فروشگاه</h1>
+
+<form class="filter-bar" method="get">
+    <input type="search" name="q" value="{{ query }}" placeholder="جستجوی نام محصول یا دسته‌بندی">
+    <select name="status">
+        <option value="">همه وضعیت‌ها</option>
+        <option value="available" {% if status == 'available' %}selected{% endif %}>فعال</option>
+        <option value="hidden" {% if status == 'hidden' %}selected{% endif %}>غیرفعال</option>
+        <option value="low" {% if status == 'low' %}selected{% endif %}>کم‌موجودی</option>
+        <option value="out" {% if status == 'out' %}selected{% endif %}>ناموجود</option>
+    </select>
+    <button class="admin-button" type="submit">اعمال فیلتر</button>
+</form>
+
+<section class="panel-card">
+    <div class="panel-head">
+        <h2>لیست محصولات</h2>
+        <a href="{% url 'admin:shop_product_add' %}">افزودن محصول</a>
+    </div>
+
+    <div class="table-wrap">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>محصول</th>
+                    <th>دسته‌بندی</th>
+                    <th>قیمت</th>
+                    <th>موجودی</th>
+                    <th>نمایش</th>
+                    <th>عملیات</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                    <tr>
+                        <td>
+                            <div class="product-cell">
+                                {% if product.image %}
+                                    <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                                {% else %}
+                                    <span class="product-placeholder"></span>
+                                {% endif %}
+                                <span>
+                                    <strong>{{ product.name }}</strong>
+                                    <span>{{ product.slug }}</span>
+                                </span>
+                            </div>
+                        </td>
+                        <td>{{ product.category.name }}</td>
+                        <td>{{ product.price|floatformat:"0" }} تومان</td>
+                        <td>{{ product.stock }}</td>
+                        <td>
+                            {% if product.available %}
+                                <span class="status-badge status-success">فعال</span>
+                            {% else %}
+                                <span class="status-badge status-warning">غیرفعال</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a class="admin-button secondary" href="{% url 'admin:shop_product_change' product.id %}">ویرایش</a>
+                            <a class="admin-button secondary" href="{% url 'shop:product_detail' product.slug %}">مشاهده</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="6" class="empty-panel">محصولی با این فیلتر پیدا نشد.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}
