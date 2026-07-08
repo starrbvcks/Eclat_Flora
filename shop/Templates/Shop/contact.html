@@ -6,29 +6,104 @@
 <style>
     .contact-layout {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) 320px;
+        grid-template-columns: minmax(0, 1fr) minmax(280px, 340px);
         gap: 34px;
-        width: min(960px, 100%);
+        width: min(980px, 100%);
         margin: 0 auto;
     }
 
     .contact-copy h1 {
-        margin: 0 0 18px;
-        font-size: 34px;
-        font-weight: 400;
-        line-height: 1.5;
+        max-width: 640px;
+        margin: 0 0 16px;
+        font-family: var(--font-brand);
+        font-size: clamp(38px, 6vw, 64px);
+        font-weight: 500;
+        line-height: 1.08;
+        direction: ltr;
+        text-align: left;
+        text-wrap: balance;
+    }
+
+    .contact-copy h1 span {
+        color: var(--gold);
+        font-style: italic;
     }
 
     .contact-copy p {
-        margin: 0;
+        max-width: 560px;
+        margin: 0 0 24px;
         color: var(--muted);
         line-height: 2;
+    }
+
+    .contact-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .custom-order-form {
+        display: grid;
+        gap: 14px;
+        margin-top: 28px;
+        padding-top: 24px;
+        border-top: 1px solid var(--border-soft);
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .form-field {
+        display: grid;
+        gap: 7px;
+    }
+
+    .form-field.full {
+        grid-column: 1 / -1;
+    }
+
+    .form-field label {
+        color: var(--text);
+        font-size: 14px;
+        font-weight: 800;
+    }
+
+    .form-field input,
+    .form-field textarea {
+        width: 100%;
+        min-height: 46px;
+        padding: 12px 13px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background: rgba(5, 5, 5, 0.62);
+        color: var(--text);
+    }
+
+    .form-field textarea {
+        min-height: 110px;
+        resize: vertical;
+    }
+
+    .form-field input::placeholder,
+    .form-field textarea::placeholder {
+        color: var(--muted-soft);
+    }
+
+    .form-note {
+        margin: 0;
+        color: var(--muted-soft);
+        font-size: 13px;
+        line-height: 1.8;
     }
 
     .contact-list {
         margin: 0;
         padding: 24px;
         border: 1px solid var(--border-soft);
+        border-radius: var(--radius);
         background: linear-gradient(180deg, var(--surface) 0%, #0a0a0a 100%);
         list-style: none;
     }
@@ -38,11 +113,13 @@
         margin-bottom: 6px;
         color: var(--muted-soft);
         font-size: 13px;
-        font-weight: 400;
+        font-weight: 700;
     }
 
     .contact-list li + li {
         margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid var(--border-soft);
     }
 
     @media (max-width: 760px) {
@@ -50,17 +127,60 @@
             grid-template-columns: 1fr;
         }
     }
+
+    @media (max-width: 520px) {
+        .contact-actions,
+        .contact-actions .btn {
+            width: 100%;
+        }
+
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+    }
 </style>
 
 <section class="contact-layout">
     <div class="contact-copy">
-        <h1>تماس با ما</h1>
-        <p>برای سفارش اختصاصی یا هماهنگی خرید، از راه‌های زیر با Éclat Floral در ارتباط باشید.</p>
+        <span class="eyebrow">ارتباط با فروشگاه</span>
+        <h1>Tell us the <span>occasion</span>, we will shape the flowers.</h1>
+        <p>برای مناسبت، رنگ دلخواه، بودجه یا زمان ارسال مشخص پیام بدهید تا انتخاب و هماهنگی سفارش دقیق تر انجام شود.</p>
+        <div class="contact-actions">
+            <a class="btn" href="{% url 'shop:product_list' %}">دیدن محصولات</a>
+            <a class="btn secondary" href="{% url 'cart:cart_detail' %}">بررسی سبد خرید</a>
+        </div>
+
+        <form class="custom-order-form" action="{% url 'shop:contact' %}" method="get">
+            <p class="form-note">برای سفارش اختصاصی، همین اطلاعات را آماده کنید و از راه ارتباط مستقیم برای ما بفرستید.</p>
+            <div class="form-grid">
+                <div class="form-field">
+                    <label for="occasion">مناسبت</label>
+                    <input id="occasion" name="occasion" type="text" placeholder="تولد، سالگرد، عذرخواهی...">
+                </div>
+                <div class="form-field">
+                    <label for="colors">رنگ های دلخواه</label>
+                    <input id="colors" name="colors" type="text" placeholder="قرمز تیره، سفید، آفتابگردان...">
+                </div>
+                <div class="form-field">
+                    <label for="budget">بودجه حدودی</label>
+                    <input id="budget" name="budget" type="text" inputmode="numeric" placeholder="مثلا ۱٬۵۰۰٬۰۰۰ تومان">
+                </div>
+                <div class="form-field">
+                    <label for="delivery-date">تاریخ ارسال</label>
+                    <input id="delivery-date" name="delivery_date" type="text" placeholder="مثلا جمعه عصر">
+                </div>
+                <div class="form-field full">
+                    <label for="details">جزئیات سفارش</label>
+                    <textarea id="details" name="details" placeholder="برای چه کسی است؟ چه حال و هوایی دوست دارید؟"></textarea>
+                </div>
+            </div>
+            <button class="btn" type="submit">آماده کردن اطلاعات سفارش</button>
+        </form>
     </div>
 
     <ul class="contact-list">
         <li>
-            <strong>ارسال</strong>
+            <strong>محدوده ارسال</strong>
             تهران
         </li>
         <li>
@@ -68,7 +188,7 @@
             @eclatflowershop
         </li>
         <li>
-            <strong>ارتباط</strong>
+            <strong>ارتباط مستقیم</strong>
             @idontwannatalk
         </li>
     </ul>

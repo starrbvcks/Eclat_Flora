@@ -6,6 +6,7 @@ from django.urls import path
 from django.utils.html import format_html
 
 from .models import Category, Product
+from .price_utils import format_price_value
 
 
 admin.site.site_header = "مدیریت Éclat Floral"
@@ -14,7 +15,7 @@ admin.site.index_title = "مدیریت فروشگاه"
 
 
 def toman(value):
-    return f"{value:,.0f} تومان"
+    return format_html('<span class="ef-price">{} تومان</span>', format_price_value(value))
 
 
 @admin.register(Category)

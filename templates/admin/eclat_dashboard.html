@@ -1,4 +1,5 @@
 {% extends "admin/base_site.html" %}
+{% load price_filters %}
 
 {% block content %}
 <div class="ef-dashboard">
@@ -62,7 +63,7 @@
                         {% endif %}
                         <span>
                             <strong>{{ product.name }}</strong>
-                            <small>{{ product.category.name }} · {{ product.price|floatformat:"0" }} تومان</small>
+                            <small>{{ product.category.name }} · <span class="ef-price">{{ product.price|format_price }} تومان</span></small>
                         </span>
                         {% if product.available %}
                             <em class="ef-badge ef-badge-success">فعال</em>

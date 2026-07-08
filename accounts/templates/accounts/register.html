@@ -1,21 +1,22 @@
 {% extends "shop/base.html" %}
 
-{% block title %}ثبت‌نام | Éclat Floral{% endblock %}
+{% block title %}ثبت نام | Éclat Floral{% endblock %}
 
 {% block content %}
 <style>
     .auth-box {
-        width: min(480px, 100%);
+        width: min(500px, 100%);
         margin: 0 auto;
-        padding: 32px;
+        padding: clamp(26px, 5vw, 34px);
         border: 1px solid var(--border-soft);
+        border-radius: var(--radius);
         background: linear-gradient(180deg, var(--surface) 0%, #0a0a0a 100%);
     }
 
     .auth-box h1 {
         margin: 0 0 10px;
-        font-size: 28px;
-        font-weight: 800;
+        font-size: 30px;
+        font-weight: 900;
     }
 
     .auth-copy {
@@ -33,12 +34,15 @@
         margin-bottom: 8px;
         color: var(--muted);
         font-size: 14px;
+        font-weight: 700;
     }
 
     .form-row input {
         width: 100%;
-        padding: 13px 14px;
+        min-height: 46px;
+        padding: 0 14px;
         border: 1px solid var(--border);
+        border-radius: 6px;
         background: var(--bg-deep);
         color: var(--text);
     }
@@ -63,8 +67,9 @@
 </style>
 
 <section class="auth-box">
-    <h1>ثبت‌نام</h1>
-    <p class="auth-copy">برای ساخت حساب فقط ایمیل و رمز عبور لازم است.</p>
+    <span class="eyebrow">حساب کاربری</span>
+    <h1>ثبت نام</h1>
+    <p class="auth-copy">برای ادامه سفارش یک حساب ساده بسازید.</p>
 
     <form method="post">
         {% csrf_token %}
@@ -82,9 +87,6 @@
         <button class="btn" type="submit">ساخت حساب</button>
     </form>
 
-    <p class="auth-note">
-        قبلا ثبت‌نام کرده‌اید؟
-        <a href="{% url 'accounts:login' %}">ورود</a>
-    </p>
+    <p class="auth-note">قبلا ثبت نام کرده اید؟ <a href="{% url 'accounts:login' %}">وارد شوید</a></p>
 </section>
 {% endblock %}

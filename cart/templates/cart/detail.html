@@ -1,4 +1,5 @@
 {% extends "shop/base.html" %}
+{% load price_filters %}
 
 {% block title %}سبد خرید | Éclat Floral{% endblock %}
 
@@ -6,7 +7,7 @@
 <style>
     .cart-layout {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) 320px;
+        grid-template-columns: minmax(0, 1fr) minmax(280px, 340px);
         gap: 34px;
         align-items: start;
     }
@@ -23,6 +24,7 @@
         align-items: center;
         padding: 16px;
         border: 1px solid var(--border-soft);
+        border-radius: var(--radius);
         background: linear-gradient(180deg, var(--surface) 0%, #0a0a0a 100%);
     }
 
@@ -31,13 +33,14 @@
         width: 96px;
         height: 112px;
         object-fit: cover;
+        border-radius: 6px;
         background: var(--surface-soft);
     }
 
     .cart-item h2 {
         margin: 0 0 8px;
         font-size: 18px;
-        font-weight: 400;
+        font-weight: 800;
         line-height: 1.5;
     }
 
@@ -58,8 +61,10 @@
 
     .quantity-form select {
         min-width: 72px;
-        padding: 9px;
+        min-height: 38px;
+        padding: 0 9px;
         border: 1px solid var(--border);
+        border-radius: 6px;
         background: var(--bg-deep);
         color: var(--text);
     }
@@ -68,9 +73,11 @@
         min-height: 38px;
         padding: 0 12px;
         border: 1px solid var(--border);
+        border-radius: 6px;
         background: var(--surface-soft);
         color: var(--text);
         cursor: pointer;
+        font-weight: 700;
     }
 
     .item-total {
@@ -83,11 +90,13 @@
         margin-bottom: 12px;
         color: var(--gold);
         font-size: 17px;
+        white-space: nowrap;
     }
 
     .remove-link {
         color: var(--danger);
         font-size: 13px;
+        border-bottom: 1px solid rgba(224, 138, 128, 0.35);
     }
 
     .cart-summary {
@@ -95,13 +104,21 @@
         top: 100px;
         padding: 22px;
         border: 1px solid var(--border);
+        border-radius: var(--radius);
         background: linear-gradient(180deg, var(--surface) 0%, #0a0a0a 100%);
     }
 
     .cart-summary h2 {
-        margin: 0 0 18px;
-        font-size: 21px;
-        font-weight: 400;
+        margin: 0 0 10px;
+        font-size: 22px;
+        font-weight: 900;
+    }
+
+    .summary-copy {
+        margin: 0 0 12px;
+        color: var(--muted-soft);
+        font-size: 14px;
+        line-height: 1.8;
     }
 
     .summary-line {
@@ -116,6 +133,13 @@
     .summary-total {
         color: var(--gold);
         font-size: 18px;
+        font-weight: 900;
+    }
+
+    .cart-price {
+        color: var(--gold);
+        font-weight: 900;
+        white-space: nowrap;
     }
 
     .summary-actions {
@@ -125,16 +149,17 @@
     }
 
     .empty-cart {
-        max-width: 620px;
-        padding: 42px;
+        max-width: 650px;
+        padding: clamp(28px, 5vw, 44px);
         border: 1px solid var(--border);
+        border-radius: var(--radius);
         background: linear-gradient(180deg, var(--surface) 0%, #0a0a0a 100%);
     }
 
     .empty-cart h1 {
         margin: 0 0 12px;
-        font-size: 28px;
-        font-weight: 400;
+        font-size: clamp(26px, 4vw, 34px);
+        font-weight: 900;
     }
 
     .empty-cart p {
@@ -168,26 +193,34 @@
             grid-column: 1 / -1;
             text-align: right;
         }
+
+        .quantity-form {
+            align-items: stretch;
+            flex-direction: column;
+        }
     }
 </style>
 
 <div class="page-shell">
     {% if cart|length > 0 %}
         <div class="page-head">
-            <h1>سبد خرید</h1>
+            <div>
+                <span class="eyebrow">بازبینی سفارش</span>
+                <h1>سبد خرید</h1>
+            </div>
             <span class="muted">{{ cart|length }} آیتم</span>
         </div>
 
         <section class="cart-layout">
-            <div class="cart-items">
+            <div class="cart-items" aria-label="محصولات سبد خرید">
                 {% for item in cart %}
                     {% with product=item.product %}
                         <article class="cart-item">
                             <a href="{% url 'shop:product_detail' product.slug %}">
                                 {% if product.image %}
-                                    <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                                    <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy">
                                 {% else %}
-                                    <span class="cart-image-placeholder"></span>
+                                    <span class="cart-image-placeholder" aria-hidden="true"></span>
                                 {% endif %}
                             </a>
 
@@ -195,47 +228,50 @@
                                 <h2><a href="{% url 'shop:product_detail' product.slug %}">{{ product.name }}</a></h2>
                                 <div class="item-meta">
                                     <span>{{ product.category.name }}</span>
-                                    <span>{{ item.price|floatformat:"0" }} تومان</span>
+                                    <span class="cart-price">{{ item.price|format_price }} تومان</span>
                                 </div>
 
                                 <form action="{% url 'cart:cart_add' product.id %}" method="post" class="quantity-form">
+                                    <label class="muted" for="{{ item.update_quantity_form.quantity.id_for_label }}">تعداد</label>
                                     {{ item.update_quantity_form.quantity }}
                                     {{ item.update_quantity_form.override }}
                                     {% csrf_token %}
-                                    <button type="submit" class="small-btn">به‌روزرسانی</button>
+                                    <button type="submit" class="small-btn">به روزرسانی</button>
                                 </form>
                             </div>
 
                             <div class="item-total">
-                                <strong>{{ item.total_price|floatformat:"0" }} تومان</strong>
-                                <a href="{% url 'cart:cart_remove' product.id %}" class="remove-link">حذف</a>
+                                <strong>{{ item.total_price|format_price }} تومان</strong>
+                                <a href="{% url 'cart:cart_remove' product.id %}" class="remove-link">حذف از سبد</a>
                             </div>
                         </article>
                     {% endwith %}
                 {% endfor %}
             </div>
 
-            <aside class="cart-summary">
+            <aside class="cart-summary" aria-label="خلاصه سفارش">
                 <h2>خلاصه سفارش</h2>
+                <p class="summary-copy">تعداد محصولات را بررسی کنید و سفارش را ادامه دهید.</p>
                 <div class="summary-line">
-                    <span>تعداد</span>
+                    <span>تعداد کل</span>
                     <span>{{ cart|length }}</span>
                 </div>
                 <div class="summary-line summary-total">
                     <span>جمع کل</span>
-                    <strong>{{ cart.get_total_price|floatformat:"0" }} تومان</strong>
+                    <strong>{{ cart.get_total_price|format_price }} تومان</strong>
                 </div>
                 <div class="summary-actions">
-                    <a href="{% url 'cart:checkout' %}" class="btn">ادامه و پرداخت</a>
-                    <a href="{% url 'shop:product_list' %}" class="btn secondary">ادامه خرید</a>
+                    <a href="{% url 'cart:checkout' %}" class="btn">ادامه سفارش</a>
+                    <a href="{% url 'shop:product_list' %}" class="btn secondary">افزودن محصول دیگر</a>
                 </div>
             </aside>
         </section>
     {% else %}
         <section class="empty-cart">
-            <h1>سبد خرید خالی است</h1>
-            <p>محصولی انتخاب نشده. از فروشگاه شروع کنید و چیدمان دلخواهتان را بسازید.</p>
-            <a href="{% url 'shop:product_list' %}" class="btn">رفتن به فروشگاه</a>
+            <span class="eyebrow">سبد خرید</span>
+            <h1>هنوز محصولی انتخاب نشده است</h1>
+            <p>از فروشگاه شروع کنید و محصول دلخواه را به سبد اضافه کنید.</p>
+            <a href="{% url 'shop:product_list' %}" class="btn">دیدن محصولات</a>
         </section>
     {% endif %}
 </div>

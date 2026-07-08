@@ -4,29 +4,276 @@
 
 {% block content %}
 <style>
-    .text-page {
-        width: min(760px, 100%);
+    .about-page {
+        width: min(980px, 100%);
         margin: 0 auto;
     }
 
-    .text-page h1 {
-        margin: 0 0 20px;
-        font-size: 34px;
-        font-weight: 400;
-        line-height: 1.5;
+    .about-hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(240px, 360px);
+        gap: 34px;
+        align-items: end;
+        margin-bottom: 44px;
+        padding-bottom: 34px;
+        border-bottom: 1px solid var(--border-soft);
     }
 
-    .text-page p {
+    .about-title-wrap {
+        position: relative;
+        isolation: isolate;
+    }
+
+    .about-title-wrap::before {
+        content: "";
+        position: absolute;
+        inset: -24px -18px auto auto;
+        z-index: -1;
+        width: 190px;
+        height: 190px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(216, 177, 90, 0.16), transparent 66%);
+        filter: blur(12px);
+        opacity: 0.78;
+    }
+
+    .about-kicker {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 16px;
+        color: var(--gold);
+        font-family: var(--font-brand);
+        font-size: 15px;
+        letter-spacing: 0.08em;
+    }
+
+    .about-kicker::after {
+        content: "";
+        width: 54px;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--gold));
+    }
+
+    .about-hero h1 {
         margin: 0 0 18px;
+        font-family: var(--font-brand);
+        font-size: clamp(42px, 7vw, 78px);
+        font-weight: 500;
+        line-height: 1.02;
+    }
+
+    .disperse-title {
+        display: grid;
+        gap: 2px;
+        direction: ltr;
+        text-align: left;
+    }
+
+    .disperse-word {
+        display: inline-flex;
+        width: max-content;
+        max-width: 100%;
+        color: var(--text);
+        cursor: default;
+        text-shadow: 0 22px 60px rgba(0, 0, 0, 0.45);
+        white-space: nowrap;
+    }
+
+    .disperse-word:nth-child(2) {
+        color: var(--accent-soft);
+        transform: translateX(0.18em);
+    }
+
+    .disperse-word:nth-child(3) {
+        color: var(--gold);
+        transform: translateX(0.62em);
+        font-style: italic;
+    }
+
+    .disperse-word span {
+        display: inline-block;
+        transition: transform 0.75s cubic-bezier(0.33, 1, 0.68, 1), color 0.3s ease;
+        will-change: transform;
+    }
+
+    .scramble-word {
+        min-height: 1em;
+        outline: 0;
+    }
+
+    .scramble-word.is-scrambling {
+        color: var(--gold);
+        letter-spacing: 0.015em;
+        opacity: 0.7;
+    }
+
+    .disperse-title:hover .disperse-word:nth-child(1) span:nth-child(1) { transform: translate(-0.22em, -0.12em) rotate(-9deg); }
+    .disperse-title:hover .disperse-word:nth-child(1) span:nth-child(2) { transform: translate(-0.08em, 0.10em) rotate(5deg); }
+    .disperse-title:hover .disperse-word:nth-child(1) span:nth-child(3) { transform: translate(0.04em, -0.14em) rotate(8deg); }
+    .disperse-title:hover .disperse-word:nth-child(1) span:nth-child(4) { transform: translate(0.08em, 0.12em) rotate(-6deg); }
+    .disperse-title:hover .disperse-word:nth-child(1) span:nth-child(5) { transform: translate(0.14em, -0.08em) rotate(7deg); }
+    .disperse-title:hover .disperse-word:nth-child(1) span:nth-child(6) { transform: translate(0.18em, 0.10em) rotate(-8deg); }
+
+    .disperse-title:hover .disperse-word:nth-child(2) span:nth-child(1) { transform: translate(-0.16em, 0.12em) rotate(7deg); }
+    .disperse-title:hover .disperse-word:nth-child(2) span:nth-child(2) { transform: translate(-0.06em, -0.15em) rotate(-8deg); }
+    .disperse-title:hover .disperse-word:nth-child(2) span:nth-child(3) { transform: translate(0.07em, 0.13em) rotate(6deg); }
+    .disperse-title:hover .disperse-word:nth-child(2) span:nth-child(4) { transform: translate(0.14em, -0.10em) rotate(-5deg); }
+
+    .disperse-title:hover .disperse-word:nth-child(3) span:nth-child(1) { transform: translate(-0.18em, -0.10em) rotate(-7deg); }
+    .disperse-title:hover .disperse-word:nth-child(3) span:nth-child(2) { transform: translate(-0.08em, 0.15em) rotate(7deg); }
+    .disperse-title:hover .disperse-word:nth-child(3) span:nth-child(3) { transform: translate(0.04em, -0.13em) rotate(-8deg); }
+    .disperse-title:hover .disperse-word:nth-child(3) span:nth-child(4) { transform: translate(0.11em, 0.12em) rotate(6deg); }
+    .disperse-title:hover .disperse-word:nth-child(3) span:nth-child(5) { transform: translate(0.16em, -0.08em) rotate(-5deg); }
+    .disperse-title:hover .disperse-word:nth-child(3) span:nth-child(6) { transform: translate(0.20em, 0.10em) rotate(8deg); }
+    .disperse-title:hover .disperse-word:nth-child(3) span:nth-child(7) { transform: translate(0.26em, -0.08em) rotate(-6deg); }
+
+    .about-hero p,
+    .about-section p {
+        margin: 0;
         color: var(--muted);
-        font-size: 16px;
         line-height: 2;
+    }
+
+    .about-copy {
+        max-width: 560px;
+        margin-top: 18px;
+        color: var(--muted);
+    }
+
+    .about-image {
+        min-height: 430px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background:
+            linear-gradient(180deg, rgba(11, 11, 12, 0.02), rgba(5, 5, 5, 0.26)),
+            url("/media/site/ecla.jpg");
+        background-size: cover;
+        background-position: center top;
+        box-shadow: 0 28px 80px rgba(0, 0, 0, 0.32);
+    }
+
+    .about-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+    }
+
+    .about-section {
+        padding-top: 18px;
+        border-top: 1px solid var(--border);
+    }
+
+    .about-section h2 {
+        margin: 0 0 10px;
+        font-size: 20px;
+    }
+
+    @media (max-width: 760px) {
+        .about-hero,
+        .about-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .disperse-word:nth-child(2),
+        .disperse-word:nth-child(3) {
+            transform: none;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .disperse-word span {
+            transition: none;
+        }
+
+        .disperse-title:hover .disperse-word span {
+            transform: none !important;
+        }
     }
 </style>
 
-<section class="text-page">
-    <h1>درباره Éclat Floral</h1>
-    <p>Éclat Floral برای انتخاب گل‌های خاص و مینیمال ساخته شده؛ جایی برای هدیه‌های تمیز، ظریف و به‌یادماندنی.</p>
-    <p>تمرکز ما روی ترکیب رنگ، فرم و جزئیاتی است که بدون شلوغی دیده می‌شوند.</p>
+<section class="about-page">
+    <div class="about-hero">
+        <div class="about-title-wrap">
+            <span class="about-kicker">درباره Éclat</span>
+            <h1 class="disperse-title" aria-label="Floral Made Classic">
+                <span class="disperse-word scramble-word" tabindex="0" data-scramble-text="Floral">Floral</span>
+                <span class="disperse-word scramble-word" tabindex="0" data-scramble-text="Made">Made</span>
+                <span class="disperse-word scramble-word" tabindex="0" data-scramble-text="Classic">Classic</span>
+            </h1>
+            <p class="about-copy">Éclat Floral برای انتخاب گل های خاص با ترکیب های تیره، مرتب و کم شلوغ ساخته شده است.</p>
+        </div>
+        <div class="about-image" role="img" aria-label="سبد گل آفتابگردان با امضای Éclat Floral"></div>
+    </div>
+
+    <div class="about-grid">
+        <section class="about-section">
+            <h2>زبان بصری</h2>
+            <p>کنتراست، بافت و ترکیب های آرام اما دقیق.</p>
+        </section>
+        <section class="about-section">
+            <h2>تجربه خرید</h2>
+            <p>دیدن محصول، قیمت و ادامه سفارش بدون مسیر اضافه.</p>
+        </section>
+        <section class="about-section">
+            <h2>سفارش خاص</h2>
+            <p>برای مناسبت، رنگ یا زمان ارسال مشخص، قبل از خرید هماهنگ کنید.</p>
+        </section>
+    </div>
 </section>
+
+<script>
+    (() => {
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const words = document.querySelectorAll('[data-scramble-text]');
+        if (reduceMotion || !words.length) {
+            return;
+        }
+
+        const shuffleOriginalChars = (text, revealedCount) => {
+            const characters = text.split('');
+            const locked = characters.slice(0, Math.max(0, revealedCount));
+            const unlocked = characters.slice(locked.length);
+
+            for (let i = unlocked.length - 1; i > 0; i -= 1) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [unlocked[i], unlocked[j]] = [unlocked[j], unlocked[i]];
+            }
+
+            return [...locked, ...unlocked].join('');
+        };
+
+        const scramble = (element) => {
+            const text = element.dataset.scrambleText || element.textContent || '';
+            const speed = 35;
+            const maxIterations = 8;
+            let iteration = 0;
+
+            window.clearInterval(element._scrambleTimer);
+            element.classList.add('is-scrambling');
+
+            element._scrambleTimer = window.setInterval(() => {
+                const revealedCount = Math.max(0, iteration - 2);
+                element.textContent = shuffleOriginalChars(text, revealedCount);
+                iteration += 1;
+
+                if (iteration >= maxIterations) {
+                    window.clearInterval(element._scrambleTimer);
+                    element.textContent = text;
+                    element.classList.remove('is-scrambling');
+                }
+            }, speed);
+        };
+
+        words.forEach((word) => {
+            word.addEventListener('mouseenter', () => scramble(word));
+            word.addEventListener('focus', () => scramble(word));
+            word.addEventListener('mouseleave', () => {
+                window.clearInterval(word._scrambleTimer);
+                word.textContent = word.dataset.scrambleText || word.textContent;
+                word.classList.remove('is-scrambling');
+            });
+        });
+    })();
+</script>
 {% endblock %}

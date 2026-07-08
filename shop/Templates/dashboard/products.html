@@ -1,4 +1,5 @@
 {% extends "dashboard/base.html" %}
+{% load price_filters %}
 
 {% block title %}محصولات | Éclat Floral{% endblock %}
 
@@ -53,7 +54,7 @@
                             </div>
                         </td>
                         <td>{{ product.category.name }}</td>
-                        <td>{{ product.price|floatformat:"0" }} تومان</td>
+                        <td>{{ product.price|format_price }} تومان</td>
                         <td>{{ product.stock }}</td>
                         <td>
                             {% if product.available %}

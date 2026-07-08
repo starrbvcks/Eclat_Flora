@@ -1,4 +1,5 @@
 {% extends "shop/base.html" %}
+{% load price_filters %}
 
 {% block title %}{% if category %}{{ category.name }}{% else %}فروشگاه{% endif %} | Éclat Floral{% endblock %}
 
@@ -7,77 +8,182 @@
     .hero {
         display: grid;
         grid-template-columns: minmax(0, 1fr) minmax(280px, 420px);
-        gap: 42px;
+        gap: clamp(26px, 5vw, 54px);
         align-items: center;
-        margin-bottom: 54px;
+        margin-bottom: clamp(38px, 6vw, 70px);
     }
 
     .hero h1 {
-        max-width: 640px;
+        position: relative;
+        max-width: 690px;
         margin: 0 0 18px;
         font-family: var(--font-brand);
-        font-size: clamp(46px, 7vw, 76px);
+        font-size: clamp(42px, 6vw, 76px);
         font-weight: 500;
-        letter-spacing: 0.01em;
         line-height: 1.08;
-        transition: color 0.28s ease, letter-spacing 0.28s ease, transform 0.28s ease;
     }
 
-    .hero h1:hover {
-        color: var(--accent-soft);
-        letter-spacing: 0.025em;
-        transform: translateX(-6px);
+    .hero-title {
+        display: grid;
+        gap: 4px;
+        direction: ltr;
+        text-align: left;
+        isolation: isolate;
     }
 
-    .hero p {
+    .hero-title::after {
+        content: "";
+        width: min(280px, 58vw);
+        height: 1px;
+        margin-top: 14px;
+        background: linear-gradient(90deg, var(--gold), rgba(216, 177, 90, 0.08));
+        transform-origin: left;
+        animation: heroLine 1.1s ease 0.55s both;
+    }
+
+    .hero-title-line {
+        display: block;
+        width: max-content;
+        max-width: 100%;
+        opacity: 0;
+        transform: translateY(18px);
+        animation: heroRise 0.8s cubic-bezier(0.33, 1, 0.68, 1) both;
+        text-shadow: 0 22px 60px rgba(0, 0, 0, 0.42);
+    }
+
+    .hero-title-line:nth-child(2) {
+        animation-delay: 0.12s;
+    }
+
+    .hero-title-line:nth-child(3) {
+        animation-delay: 0.24s;
+    }
+
+    .hero-title-accent {
         position: relative;
-        max-width: 520px;
-        margin: 0;
-        padding-right: 54px;
-        color: var(--muted);
-        font-size: 15px;
-        font-weight: 500;
-        letter-spacing: 0.08em;
-        line-height: 1.9;
-        text-transform: uppercase;
+        display: inline-block;
+        color: var(--gold);
+        font-style: italic;
+        transition: transform 0.45s ease, color 0.45s ease, text-shadow 0.45s ease;
     }
 
-    .hero p::before {
+    .hero-title-accent::after {
         content: "";
         position: absolute;
-        top: 0.95em;
         right: 0;
-        width: 36px;
-        height: 1px;
-        background: var(--gold);
+        bottom: 0.04em;
+        left: 0;
+        z-index: -1;
+        height: 0.18em;
+        background: rgba(139, 30, 30, 0.42);
+        transform: scaleX(0.96) skewX(-12deg);
+        transform-origin: left;
+    }
+
+    .hero-title:hover .hero-title-accent {
+        color: var(--accent-soft);
+        transform: translateY(-0.05em);
+        text-shadow: 0 0 24px rgba(216, 177, 90, 0.24);
+    }
+
+    @keyframes heroRise {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes heroLine {
+        from {
+            opacity: 0;
+            transform: scaleX(0);
+        }
+        to {
+            opacity: 1;
+            transform: scaleX(1);
+        }
+    }
+
+    .hero-copy {
+        max-width: 590px;
+        margin: 0 0 26px;
+        color: var(--muted);
+        font-size: clamp(15px, 2vw, 17px);
+        line-height: 2;
+        direction: ltr;
+        text-align: left;
+        text-wrap: balance;
+    }
+
+    .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+    }
+
+    .hero-note {
+        color: var(--muted-soft);
+        font-size: 13px;
     }
 
     .hero-image {
-        min-height: 360px;
+        min-height: clamp(310px, 45vw, 480px);
         border: 1px solid var(--border);
+        border-radius: var(--radius);
         background:
-            linear-gradient(180deg, rgba(11, 11, 12, 0.04), rgba(5, 5, 5, 0.7)),
+            linear-gradient(180deg, rgba(11, 11, 12, 0.02), rgba(5, 5, 5, 0.62)),
             url("/media/products/2026/06/19/photo_2_2026-06-18_17-40-41.jpg");
         background-position: center;
         background-size: cover;
         box-shadow: 0 30px 80px rgba(0, 0, 0, 0.32);
     }
 
+    .intro-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+        margin-bottom: clamp(42px, 6vw, 66px);
+    }
+
+    .intro-item {
+        padding: 22px;
+        border-top: 1px solid var(--border);
+        background: rgba(21, 21, 22, 0.56);
+    }
+
+    .intro-item strong {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--text);
+        font-size: 17px;
+    }
+
+    .intro-item span {
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.9;
+    }
+
     .category-strip {
         display: flex;
         flex-wrap: wrap;
         gap: 10px;
-        margin-bottom: 44px;
+        margin-bottom: 34px;
     }
 
     .category-chip {
         display: inline-flex;
         align-items: center;
-        min-height: 40px;
+        justify-content: center;
+        min-height: 42px;
         padding: 0 16px;
         border: 1px solid var(--border);
+        border-radius: 999px;
         color: var(--muted);
         font-size: 13px;
+        font-weight: 800;
+        transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
     }
 
     .category-chip:hover,
@@ -95,12 +201,20 @@
 
     .product-card {
         border: 1px solid var(--border-soft);
+        border-radius: var(--radius);
         background: linear-gradient(180deg, var(--surface) 0%, #0a0a0a 100%);
         overflow: hidden;
-        transition: border-color 0.2s ease, transform 0.2s ease;
+        transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
     }
 
-    .product-card:hover {
+    .product-card a {
+        display: grid;
+        height: 100%;
+        grid-template-rows: auto 1fr;
+    }
+
+    .product-card:hover,
+    .product-card:focus-within {
         border-color: var(--accent);
         transform: translateY(-3px);
         box-shadow: 0 22px 55px rgba(0, 0, 0, 0.48);
@@ -108,7 +222,6 @@
 
     .product-card img,
     .product-image-placeholder {
-        display: block;
         width: 100%;
         aspect-ratio: 4 / 5;
         object-fit: cover;
@@ -117,47 +230,155 @@
     }
 
     .product-card:hover img {
-        transform: scale(1.07);
-        filter: contrast(1.06) saturate(1.08);
+        transform: scale(1.05);
+        filter: contrast(1.05) saturate(1.06);
     }
 
     .product-body {
-        padding: 16px;
+        display: grid;
+        gap: 8px;
+        padding: 17px;
     }
 
     .product-body h3 {
-        margin: 0 0 10px;
-        font-size: 18px;
-        font-weight: 700;
-        line-height: 1.6;
-        transition: color 0.2s ease;
+        margin: 0;
+        font-size: 19px;
+        font-weight: 800;
+        line-height: 1.55;
     }
 
-    .product-card:hover .product-body h3 {
-        color: var(--accent-soft);
+    .product-category {
+        color: var(--muted-soft);
+        font-size: 13px;
+        font-weight: 700;
     }
 
     .price {
         margin: 0;
         color: var(--gold);
-        font-size: 15px;
+        font-size: 18px;
+        font-weight: 900;
+        white-space: nowrap;
+        direction: rtl;
+    }
+
+    .price-currency {
+        margin-right: 4px;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .section-note {
+        max-width: 560px;
+        color: var(--muted-soft);
+        font-size: 14px;
+        line-height: 1.9;
+    }
+
+    .process {
+        display: grid;
+        grid-template-columns: 0.9fr 1.1fr;
+        gap: 28px;
+        align-items: start;
+        margin-top: clamp(46px, 7vw, 78px);
+        padding-top: clamp(34px, 5vw, 56px);
+        border-top: 1px solid var(--border-soft);
+    }
+
+    .process h2 {
+        margin: 0 0 12px;
+        font-size: clamp(25px, 3vw, 34px);
+        line-height: 1.5;
+    }
+
+    .steps {
+        display: grid;
+        gap: 12px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .steps li {
+        display: grid;
+        grid-template-columns: 34px minmax(0, 1fr);
+        gap: 14px;
+        align-items: start;
+        padding: 16px 0;
+        border-bottom: 1px solid var(--border-soft);
+        color: var(--muted);
+    }
+
+    .steps b {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        border: 1px solid var(--border);
+        border-radius: 50%;
+        color: var(--gold);
+    }
+
+    .final-cta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        margin-top: clamp(42px, 6vw, 68px);
+        padding: 26px 0 0;
+        border-top: 1px solid var(--border-soft);
+    }
+
+    .final-cta h2 {
+        margin: 0 0 8px;
+        font-size: clamp(23px, 3vw, 31px);
+    }
+
+    .final-cta p {
+        margin: 0;
+        color: var(--muted);
     }
 
     .empty-state {
         grid-column: 1 / -1;
         padding: 42px;
         border: 1px solid var(--border);
+        border-radius: var(--radius);
         color: var(--muted);
         text-align: center;
     }
 
     @media (max-width: 860px) {
-        .hero {
+        .hero,
+        .process {
             grid-template-columns: 1fr;
         }
 
-        .hero h1 {
-            font-size: 34px;
+        .intro-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 560px) {
+        .hero-actions,
+        .final-cta {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .btn {
+            width: 100%;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .hero-title-line,
+        .hero-title::after {
+            opacity: 1;
+            transform: none;
+            animation: none;
         }
     }
 </style>
@@ -166,14 +387,39 @@
     {% if not category %}
         <section class="hero">
             <div>
-                <h1>Where Flowers Become Art</h1>
-                <p>Curated floral compositions for quietly unforgettable moments</p>
+                <span class="eyebrow"></span>
+                <h1 class="hero-title" aria-label="Where Every Bloom Becomes a Memory">
+                    <span class="hero-title-line">Where Every</span>
+                    <span class="hero-title-line"><span class="hero-title-accent">Bloom</span> Becomes</span>
+                    <span class="hero-title-line">a <span class="hero-title-accent">Memory</span></span>
+                </h1>
+                <p class="hero-copy">Dark, refined floral pieces with a simple path from selection to order</p>
+                <div class="hero-actions">
+                    <a class="btn" href="#products">دیدن محصولات</a>
+                    <a class="btn secondary" href="{% url 'shop:contact' %}">هماهنگی سفارش خاص</a>
+                    <span class="hero-note">ارسال در تهران پس از هماهنگی سفارش</span>
+                </div>
             </div>
-            <div class="hero-image" role="img" aria-label="دسته‌گل Éclat Floral"></div>
+            <div class="hero-image" role="img" aria-label="دسته گل تیره و لوکس از Éclat Floral"></div>
+        </section>
+
+        <section class="intro-grid" aria-label="ویژگی های فروشگاه">
+            <div class="intro-item">
+                <strong>انتخاب سریع</strong>
+                <span>تصویر، قیمت و دسته بندی هر محصول واضح است.</span>
+            </div>
+            <div class="intro-item">
+                <strong>چیدمان خاص</strong>
+                <span>ترکیب های تیره و مرتب برای هدیه های خاص.</span>
+            </div>
+            <div class="intro-item">
+                <strong>ادامه سفارش</strong>
+                <span>سبد خرید مرحله بعدی را روشن نشان می دهد.</span>
+            </div>
         </section>
     {% endif %}
 
-    <nav class="category-strip" aria-label="دسته‌بندی محصولات">
+    <nav class="category-strip" aria-label="دسته بندی محصولات">
         <a class="category-chip {% if not category %}active{% endif %}" href="{% url 'shop:product_list' %}">همه محصولات</a>
         {% for item in categories %}
             <a class="category-chip {% if category.id == item.id %}active{% endif %}" href="{{ item.get_absolute_url }}">{{ item.name }}</a>
@@ -182,29 +428,59 @@
 
     <section id="products">
         <div class="page-head">
-            <h2>{% if category %}{{ category.name }}{% else %}محصولات{% endif %}</h2>
+            <div>
+                <span class="eyebrow">{% if category %}دسته بندی{% else %}فروشگاه{% endif %}</span>
+                <h2>{% if category %}{{ category.name }}{% else %}محصولات منتخب{% endif %}</h2>
+            </div>
             <span class="muted">{{ products|length }} محصول</span>
         </div>
+        {% if not category %}
+            <p class="section-note">محصول را باز کنید، تعداد را انتخاب کنید و سفارش را به سبد خرید ببرید.</p>
+        {% endif %}
 
         <div class="product-grid">
             {% for product in products %}
                 <article class="product-card">
                     <a href="{% url 'shop:product_detail' product.slug %}">
                         {% if product.image %}
-                            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="{% if forloop.counter <= 4 %}eager{% else %}lazy{% endif %}">
                         {% else %}
-                            <span class="product-image-placeholder"></span>
+                            <span class="product-image-placeholder" aria-hidden="true"></span>
                         {% endif %}
                         <div class="product-body">
+                            <span class="product-category">{{ product.category.name }}</span>
                             <h3>{{ product.name }}</h3>
-                            <p class="price">{{ product.price|floatformat:"0" }} تومان</p>
+                            <p class="price"><span>{{ product.price|format_price }}</span><span class="price-currency">تومان</span></p>
                         </div>
                     </a>
                 </article>
             {% empty %}
-                <p class="empty-state">فعلا محصولی در این بخش نیست.</p>
+                <p class="empty-state">فعلا محصولی در این بخش نیست. از دسته بندی های دیگر دیدن کنید یا برای سفارش اختصاصی تماس بگیرید.</p>
             {% endfor %}
         </div>
     </section>
+
+    {% if not category %}
+        <section class="process" aria-labelledby="process-title">
+            <div>
+                <span class="eyebrow">مسیر سفارش</span>
+                <h2 id="process-title">از انتخاب گل تا هماهنگی نهایی</h2>
+                <p class="section-note">پرداخت آنلاین هنوز وصل نیست؛ سفارش فعلا برای هماهنگی نهایی آماده می شود.</p>
+            </div>
+            <ol class="steps">
+                <li><b>۱</b><span>محصول مناسب را از فروشگاه یا دسته بندی ها انتخاب کنید.</span></li>
+                <li><b>۲</b><span>در صفحه محصول تعداد را مشخص کنید و آن را به سبد خرید اضافه کنید.</span></li>
+                <li><b>۳</b><span>سبد خرید را بررسی کنید، وارد حساب شوید و سفارش را برای هماهنگی نهایی ادامه دهید.</span></li>
+            </ol>
+        </section>
+
+        <section class="final-cta">
+            <div>
+                <h2>سفارش اختصاصی دارید؟</h2>
+                <p>برای رنگ، مناسبت یا زمان ارسال خاص، قبل از خرید هماهنگ کنید.</p>
+            </div>
+            <a class="btn secondary" href="{% url 'shop:contact' %}">رفتن به صفحه تماس</a>
+        </section>
+    {% endif %}
 </div>
 {% endblock %}

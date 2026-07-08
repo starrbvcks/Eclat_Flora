@@ -1,4 +1,5 @@
 {% extends "shop/base.html" %}
+{% load price_filters %}
 
 {% block title %}تکمیل سفارش | Éclat Floral{% endblock %}
 
@@ -6,7 +7,7 @@
 <style>
     .checkout-layout {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) 340px;
+        grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
         gap: 34px;
         align-items: start;
         width: min(1080px, 100%);
@@ -15,21 +16,37 @@
 
     .checkout-panel,
     .summary-panel {
-        padding: 28px;
+        padding: clamp(24px, 4vw, 32px);
         border: 1px solid var(--border-soft);
+        border-radius: var(--radius);
         background: linear-gradient(180deg, var(--surface) 0%, #0a0a0a 100%);
     }
 
     .checkout-panel h1,
     .summary-panel h2 {
-        margin: 0 0 18px;
-        font-weight: 400;
+        margin: 0 0 16px;
+        font-weight: 900;
+        line-height: 1.45;
     }
 
     .checkout-panel p {
-        margin: 0 0 22px;
+        margin: 0 0 20px;
         color: var(--muted);
-        line-height: 1.9;
+        line-height: 1.95;
+    }
+
+    .next-steps {
+        display: grid;
+        gap: 12px;
+        margin: 22px 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .next-steps li {
+        padding: 14px 0;
+        border-top: 1px solid var(--border-soft);
+        color: var(--muted);
     }
 
     .summary-list {
@@ -54,6 +71,13 @@
         margin-top: 18px;
         color: var(--gold);
         font-size: 18px;
+        font-weight: 900;
+    }
+
+    .summary-price {
+        color: var(--gold);
+        font-weight: 900;
+        white-space: nowrap;
     }
 
     .disabled-note {
@@ -71,10 +95,18 @@
 
 <section class="checkout-layout">
     <div class="checkout-panel">
+        <span class="eyebrow">مرحله نهایی</span>
         <h1>تکمیل سفارش</h1>
-        <p>با حساب <strong>{{ request.user.username }}</strong> وارد شده‌اید. مرحله پرداخت و اطلاعات ارسال در قدم بعدی به پروژه وصل می‌شود.</p>
-        <button class="btn" type="button" disabled>پرداخت به‌زودی</button>
-        <div class="disabled-note">فعلا نمایشی است.</div>
+        <p>با حساب <strong>{{ request.user.username }}</strong> وارد شده اید. پرداخت آنلاین هنوز اضافه نشده و این صفحه فعلا خلاصه سفارش است.</p>
+
+        <ul class="next-steps">
+            <li>۱. خلاصه سفارش را بررسی کنید.</li>
+            <li>۲. زمان ارسال و آدرس را هماهنگ کنید.</li>
+            <li>۳. پرداخت واقعی بعدا به همین مرحله وصل می شود.</li>
+        </ul>
+
+        <button class="btn" type="button" disabled>پرداخت به زودی</button>
+        <div class="disabled-note">این مرحله فعلا نمایشی است و تراکنش واقعی انجام نمی دهد.</div>
     </div>
 
     <aside class="summary-panel">
@@ -83,13 +115,13 @@
             {% for item in cart %}
                 <li>
                     <span>{{ item.product.name }} × {{ item.quantity }}</span>
-                    <span>{{ item.total_price|floatformat:"0" }} تومان</span>
+                    <span class="summary-price">{{ item.total_price|format_price }} تومان</span>
                 </li>
             {% endfor %}
         </ul>
         <div class="summary-total">
             <span>جمع کل</span>
-            <strong>{{ cart.get_total_price|floatformat:"0" }} تومان</strong>
+            <strong>{{ cart.get_total_price|format_price }} تومان</strong>
         </div>
     </aside>
 </section>

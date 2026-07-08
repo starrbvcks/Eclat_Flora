@@ -357,6 +357,12 @@ a.button:hover {
     color: var(--body-quiet-color);
 }
 
+.ef-price {
+    color: #d8b15a;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
 @media (max-width: 900px) {
     .ef-hero,
     .ef-admin-grid {
